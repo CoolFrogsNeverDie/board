@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{common/layout/base}">
+	<body>
+		<!--main content -->
+		<main layout:fragment="content">
+			<section class="error-page">
+				<div class="container">
+					<div class="error-form">
+						<h3>페이지 오류</h3>
+						<p>사유는 아래와 같습니다.</p>
+						<div class="form-group">
+							<block th:if="${errorMsg != null}">
+								<span class="errorMsg" th:text="${errorMsg}"></span>
+							</block>
+						</div>
+						<a href="/board" class="btn btn-dark">홈으로 돌아가기</a>
+					</div>
+				</div>
+			</section>
+		</main>
+		<!--// main content //-->
+	</body>
+</html>

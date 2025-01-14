@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>게시판</title>
+		<link rel="stylesheet" href="/css/board.css">
+		<script src="/js/jquery/jquery-3.7.1.min.js"></script>
+	</head>
+	<body>
+		<header>
+			<div class="container">
+				<div class="header-content">
+					<div class="logo">
+						<h1><a th:href="@{/board}" class="board-logo">My Board</a></h1>
+						<h1 th:text="${pageContent}"></h1>
+					</div>
+					<div class="user-info">
+						<span th:if="${session.currentUser != null}">
+							<span th:text="'Welcome, ' + ${session.currentUser.userName}"></span>
+							<a th:href="@{/logout}">로그아웃</a>
+						</span>
+						<span th:unless="${session.currentUser != null}">
+							<a th:href="@{/member/loginpage}">로그인</a>
+						</span>
+					</div>
+				</div>
+			</div>
+		</header>
+		<!-- content 위치-->
+		<main layout:fragment="content">
+			<p>no content</p>
+		</main>
+		<!--// content 위치 //-->
+		<block th:if="${pageTitle != null}">
+			<script th:if="${pageTitle == 'postForm'}" th:src="@{/js/page/{pageTitle}.js(pageTitle=${pageTitle})}"></script>
+			<script th:if="${pageTitle == 'postDetail'}" th:src="@{/js/page/{pageTitle}.js(pageTitle=${pageTitle})}"></script>
+		</block>
+	</body>
+</html>

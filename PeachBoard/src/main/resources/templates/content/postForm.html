@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{common/layout/base}">
+	<body>
+		<!--main content -->
+		<main layout:fragment="content">
+			<section class="post-form">
+				<!-- Page Title -->
+				<div class="page-title">
+					<div class="container">
+						<h3>게시글 작성</h3>
+					</div>
+				</div>
+
+					<!-- Post Form -->
+				<div id="post-form">
+					<div class="container">
+						<form action="/post/new" method="post" enctype="multipart/form-data">
+							<div class="form-group">
+								<label for="title">제목</label>
+								<input type="text" id="title" name="title" placeholder="제목을 입력하세요">
+							</div>
+
+							<div class="form-group">
+								<label for="content">내용</label>
+								<textarea id="content" name="content" rows="10" placeholder="내용을 입력하세요"></textarea>
+							</div>
+
+							<div th:if="${errorMsg != null}" class="form-group errorMsg" th:text="${errorMsg}"></div>
+							
+							<div class="form-group">
+								<label for="file">첨부파일</label>
+								<input type="file" id="fileInput" name="file">
+								<span id="fileError" class="errorMsg"></span>
+							</div>
+
+							<div class="form-actions">
+								<button type="submit" class="btn-submit">작성하기</button>
+								<button><a href="/board" class="btn-cancel">취소</a></button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</section>
+		</main>
+	</body>
+</html>
+
+

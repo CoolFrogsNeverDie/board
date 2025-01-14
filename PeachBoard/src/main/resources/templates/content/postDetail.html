@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{common/layout/base}">
+	<body>
+		<!--main content -->
+		<main layout:fragment="content">
+			<section class="post-detail">
+				<!-- Page Title -->
+				<div class="page-title">
+					<div class="container">
+						<h3>게시글 상세</h3>
+					</div>
+				</div>
+				<!-- Post Detail -->
+				<div class="post-content">
+					<div class="container">
+						<block th:if="${post != null}">
+							<table class="post-table">
+								<tbody>
+									<tr>
+										<th>게시글 번호</th>
+										<td id="post_id" th:text="${post.id}"></td>
+									</tr>
+									<tr>
+										<th>제목</th>
+										<td th:text="${post.title}"></td>
+									</tr>
+									<tr>
+										<th>작성자</th>
+										<td th:text="${post.writer}"></td>
+									</tr>
+									<tr>
+										<th>조회수</th>
+										<td th:text="${post.hits}"></td>
+									</tr>
+									<tr>
+										<th>작성일</th>
+										<td th:text="${#temporals.format(post.createDate, 'yyyy-MM-dd HH:mm')}"></td>
+									</tr>
+									<block th:if="${post.fileName != null}">
+										<tr>
+											<th>첨부파일</th>
+											<td>
+												<a th:href="@{/file/download/{fileName}(fileName=${post.fileName})}" th:text="${post.originalFileName} + ' 다운로드'" download></a>
+											</td>
+										</tr>
+									</block>
+									<tr>
+										<th>내용</th>
+										<td th:text="${post.content}">게시글 내용</td>
+									</tr>
+								</tbody>
+							</table>
+							<!-- 댓글 목록 -->
+							<div class="comments-section">
+								<div class="comments-list" id="comments-list">
+									<div th:if="${post.replyList != null && post.replyList.size > 0}"
+										 th:each="reply : ${post.replyList}" class="comment" th:id="'comment_' + ${reply.id}">
+										<p class="comment-author">작성자: <span th:text="${reply.writer}"></span></p>
+										<p class="comment-content" th:text="${reply.content}"></p>
+										
+										<button class="btn-dark" th:id="'sub_reply_' + ${reply.id}">+ Re</button>
+										<!-- 자식 댓글 출력 -->
+										<div th:if="${reply.chilsReplyList != null && reply.chilsReplyList.size > 0}" 
+											th:each="child : ${reply.chilsReplyList}" class="child-reply">
+											<p class="comment-author">작성자: <span th:text="${child.writer}"></span></p>
+											<p class="comment-content" th:text="${child.content}"></p>
+										</div>
+									</div>
+									<!-- 댓글 추가될 곳 -->
+								</div>
+
+								<!-- 댓글 작성 폼 -->
+								<div class="comment-form">
+									<textarea id="reply_content" placeholder="댓글을 작성해주세요..." rows="4"></textarea>
+									<button class="btn btn-dark" id="addReply_btn">댓글 작성</button>
+								</div>
+							</div>
+						</block>
+						<block if:unless="${post == null && errorMsg != null}">
+							<div class="errorMsg" th:text="${errorMsg}"></div>
+							<a href="/board" class="btn btn-dark">홈으로 돌아가기</a>
+						</block>
+					</div>
+				</div>
+			</section>
+		</main>
+		<!--// main content //-->
+	</body>
+</html>

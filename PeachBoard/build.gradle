@@ -1,0 +1,38 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.1'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.board'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' //JPA
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' //타임리프
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect' // 레이아웃
+	implementation 'org.springframework.boot:spring-boot-starter-web' //MVC WEB
+	implementation 'org.springframework.boot:spring-boot-starter-validation' // 데이터 입력 검증
+	implementation 'org.springframework.boot:spring-boot-starter-security' // 스프링 시큐리티
+	implementation 'org.springframework.security:spring-security-crypto' // 비밀번호 암호화
+	runtimeOnly 'com.h2database:h2' // h2
+	compileOnly 'org.projectlombok:lombok' // 롬복
+	annotationProcessor 'org.projectlombok:lombok' // 롬복
+	implementation group: 'org.webjars', name: 'jquery', version: '3.6.0' // 제이쿼리
+}

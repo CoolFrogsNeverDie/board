@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{common/layout/base}">
+	<body>
+		<!--main content -->
+		<main layout:fragment="content">
+			<section class="notice">
+				<!-- Page Title -->
+				<div class="page-title">
+					<div class="container">
+						<h3>Board</h3>
+						<a href="/post/form" class="btn-write">글쓰기</a>
+					</div>
+				</div>
+				<!-- Board List -->
+				<div id="board-list">
+					<div class="container">
+						<table class="board-table">
+							<thead>
+								<tr>
+									<th scope="col" class="th-num">번호</th>
+									<th scope="col" class="th-title">제목</th>
+									<th scope="col" class="th-date">등록일</th>
+								</tr>
+							</thead>
+							<tbody>
+								<!-- 게시글 데이터 반복 렌더링 -->
+								<tr th:each="post : ${posts}">
+									<td th:text="${post.id}">번호</td>
+									<td>
+										<a th:href="@{/post/{id}(id=${post.id})}" th:text="${post.title}">제목</a>
+									</td>
+									<td th:text="${#temporals.format(post.createDate, 'yyyy-MM-dd HH:mm')}">등록일</td>
+								</tr>
+								<!-- 게시글 데이터가 없을 경우 -->
+								<tr th:if="${#lists.isEmpty(posts)}">
+									<td colspan="3" class="text-center">게시글이 없습니다.</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="pagination">
+					<div class="container">
+						<ul class="pagination-list">
+							<!-- 이전 버튼 -->
+							<li th:classappend="${paging.currentPage == 1} ? 'disabled'">
+								<a th:href="@{/board(page=${paging.currentPage - 2})}" th:if="${paging.currentPage > 1}">&laquo;</a>
+								<span th:if="${paging.currentPage == 1}">&laquo;</span>
+							</li>
+
+							<!-- 페이지 번호 -->
+							<li th:each="pageNum : ${paging.pageNumbers}" th:classappend="${pageNum == paging.currentPage} ? 'active'">
+								<a th:href="@{/board(page=${pageNum - 1})}" th:text="${pageNum}"></a>
+							</li>
+
+							<!-- 다음 버튼 -->
+							<li th:classappend="${paging.currentPage == paging.totalPages} ? 'disabled'">
+								<a th:href="@{/board(page=${paging.currentPage})}" th:if="${paging.currentPage < paging.totalPages}">&raquo;</a>
+								<span th:if="${paging.currentPage == paging.totalPages}">&raquo;</span>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+		</main>
+		<!--// main content //-->
+	</body>
+</html>
