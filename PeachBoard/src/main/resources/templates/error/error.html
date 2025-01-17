@@ -11,11 +11,11 @@
 						<h3>페이지 오류</h3>
 						<p>사유는 아래와 같습니다.</p>
 						<div class="form-group">
-							<block th:if="${errorMsg != null}">
+							<th:block th:if="${errorMsg != null}">
 								<span class="errorMsg" th:text="${errorMsg}"></span>
-							</block>
+							</th:block>
 						</div>
-						<a href="/board" class="btn btn-dark">홈으로 돌아가기</a>
+						<a href="/board/list" class="btn btn-dark">홈으로 돌아가기</a>
 					</div>
 				</div>
 			</section>

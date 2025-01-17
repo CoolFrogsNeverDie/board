@@ -2,7 +2,7 @@ package com.board.util;
 
 import org.springframework.ui.Model;
 
-import com.board.config.constants.BoardContants;
+import com.board.constants.BoardConstants;
 
 /**
  * PageContentUtil.java
@@ -19,6 +19,6 @@ public class PageContentUtil {
 	 */
 	public static String getViewPage(Model model, String content) {
 		model.addAttribute("pageTitle", content); // 페이지명
-		return BoardContants.ContentBaseRoot.CONTENTROOT + content; // html 경로
+		return BoardConstants.ContentBaseRoot.CONTENT_ROOT + content; // html 경로
 	}
 }

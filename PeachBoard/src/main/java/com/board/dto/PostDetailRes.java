@@ -42,8 +42,7 @@ public class PostDetailRes {
 	 * @param postEntity
 	 * @return
 	 */
-	public static PostDetailRes postFromEntity(PostEntity postEntity)
-	{
+	public static PostDetailRes postFromEntity(PostEntity postEntity) {
 		return PostDetailRes.builder()
 				.id(postEntity.getId())
 				.writer(postEntity.getWriter())

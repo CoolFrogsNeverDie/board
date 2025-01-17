@@ -31,6 +31,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation' // 데이터 입력 검증
 	implementation 'org.springframework.boot:spring-boot-starter-security' // 스프링 시큐리티
 	implementation 'org.springframework.security:spring-security-crypto' // 비밀번호 암호화
+	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'	// Log 어노테이션
 	runtimeOnly 'com.h2database:h2' // h2
 	compileOnly 'org.projectlombok:lombok' // 롬복
 	annotationProcessor 'org.projectlombok:lombok' // 롬복

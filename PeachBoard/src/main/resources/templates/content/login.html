@@ -19,10 +19,10 @@
 								<input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
 							</div>
 							<button type="submit" class="btn btn-dark">로그인</button>
-							<block th:if="${failMsg != null}">
+							<th:block th:if="${failMsg != null}">
 								<span class="form-group errorMsg" th:text="${failMsg}">
 								</sapn>
-							</block>
+							</th:block>
 						</form>
 					</div>
 				</div>

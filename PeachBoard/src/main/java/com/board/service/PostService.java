@@ -7,15 +7,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.board.config.constants.BoardContants;
+import com.board.constants.BoardConstants;
 import com.board.dto.MemberLoginRes;
 import com.board.dto.PostDetailRes;
 import com.board.dto.PostWriteReq;
@@ -27,8 +25,8 @@ import com.board.enums.ErrorMessages;
 import com.board.repository.FileRepository;
 import com.board.repository.PostRepository;
 
-import groovyjarjarantlr4.v4.parse.ANTLRParser.finallyClause_return;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transaction;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -38,7 +36,6 @@ import lombok.RequiredArgsConstructor;
  */
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class PostService {
 
 	private final HttpSession httpSession; // http 세션
@@ -51,16 +48,16 @@ public class PostService {
 	 * @param postWriteReq
 	 * @return PostWriteRes
 	 */
+	@Transactional
 	public PostWriteRes savePost(PostWriteReq postWriteReq) {
 
 		PostWriteRes postWriteRes = new PostWriteRes(); // 게시글 작성 결과값
 
-		try 
-		{
+		try {
+
 			//1. 로그인여부 확인
 			MemberLoginRes member = (MemberLoginRes) httpSession.getAttribute("currentUser");
-			if(member == null)
-			{
+			if(member == null) {
 				throw new Exception(ErrorMessages.LOGIN_REQUIRED.getMessage());
 			}
 
@@ -79,14 +76,10 @@ public class PostService {
 			//4. 첨부파일 업로드
 			MultipartFile file = postWriteReq.getFile();
 			String fileName = null;
-			if (file != null && !file.isEmpty()) 
-			{
-				try 
-				{
+			if (file != null && !file.isEmpty()) {
+				try {
 					fileName = saveFile(file); // 파일 저장 후 파이명 반환
-				} 
-				catch (IOException e)
-				{
+				} catch (IOException e) {
 					throw new Exception(ErrorMessages.FILE_UPLOAD_FAILED.getMessage(), e); // 파일 저장 오류 메세지
 				}
 			}
@@ -111,11 +104,9 @@ public class PostService {
 	
 			//8. 리턴값 세팅
 			postWriteRes.setId(newPost.getId()); // 게시글 아이디
-			postWriteRes.setResultMsg(BoardContants.State.SUCCESS); // 성공 메세지
+			postWriteRes.setResultMsg(BoardConstants.State.SUCCESS); // 성공 메세지
 	
-		}
-		catch(Exception e)
-		{
+		} catch(Exception e) {
 			postWriteRes.setResultMsg(e.getMessage()); // 실패 메세지
 		}
 

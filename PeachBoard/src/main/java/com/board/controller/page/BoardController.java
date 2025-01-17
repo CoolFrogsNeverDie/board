@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/board")
 public class BoardController {
 
 	private final PostService postService; // 게시글 서비스
@@ -31,16 +32,16 @@ public class BoardController {
 	/**
 	 * 
 	 * @param pageable 페이징 정보
-	 * @param session http 세션 객체
 	 * @param model
 	 * @return 게시판
+	 * 
+	 * F.board controller에는 왜 controller url 매핑이 안 되어 있나
+	 * -> 추후 전체 수정을 했어서 누락. 전체적인 퀄리티 떨어져 보임. 수정
 	 */
-	@RequestMapping(value = "/board", method =  RequestMethod.GET)
+	@RequestMapping(value = "/list", method =  RequestMethod.GET)
 	public String boardPage(
 			@PageableDefault(size=5, page=0) Pageable pageable
-			, HttpSession session
-			, Model model)
-	{
+			, Model model) {
 
 		Page<PostDetailRes> posts = postService.findPost(pageable); // pageable 객체로 게시글 리스트 조회
 		Pagination pagination = new Pagination(posts.map(PostDetailRes -> (Object)PostDetailRes )); // 페이징 정보

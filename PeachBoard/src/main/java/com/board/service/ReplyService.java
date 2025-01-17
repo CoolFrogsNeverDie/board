@@ -6,11 +6,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.board.config.constants.BoardContants;
+import com.board.constants.BoardConstants;
 import com.board.dto.MemberLoginRes;
 import com.board.dto.ReplyReq;
 import com.board.dto.ReplyRes;
@@ -20,9 +18,9 @@ import com.board.enums.ErrorMessages;
 import com.board.repository.PostRepository;
 import com.board.repository.ReplyRepository;
 
-import groovy.util.logging.Slf4j;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * ReplyService.java
@@ -37,7 +35,6 @@ public class ReplyService {
 	private final HttpSession httpSession; // http 세션
 	private final PostRepository postRepository; // 게시글 repository
 	private final ReplyRepository replyRepository; // 게시글 repository
-	private final Logger LOG = LoggerFactory.getLogger(getClass()); //로그
 
 	/**
 	 * 댓글 등록 메서드
@@ -48,29 +45,26 @@ public class ReplyService {
 
 		ReplyRes replyRes = null;
 
-		try
-		{
-			LOG.info("#######################reply add Start#######################");
+		try {
+			log.info("#######################reply add Start#######################");
 
 			// 1. 게시글 조회
 			Optional<PostEntity> postEntity = postRepository.findPostById(Integer.valueOf(replyReq.getPostId()));
 
 			// 2. 로그인여부 확인
 			MemberLoginRes member = (MemberLoginRes) httpSession.getAttribute("currentUser");
-			if(member == null)
-			{
+			if(member == null) {
 				throw new Exception(ErrorMessages.LOGIN_REQUIRED.getMessage());
 			}
 
-			LOG.info("#######################validate#######################");
+			log.info("#######################validate#######################");
 
 			// 3. 게시글 존재여부 검증	
-			if(!postEntity.isPresent())
-			{
+			if(!postEntity.isPresent()) {
 				throw new Exception(ErrorMessages.POST_NOT_FOUND.getMessage()); // 게시글 존재하지 않음 메세지
 			}
 
-			LOG.info("####################### ReplyEntity Builder #######################");
+			log.info("####################### ReplyEntity Builder #######################");
 
 			// 4. 저장용 댓글 객체 생성
 			ReplyEntity newReply = ReplyEntity.builder()
@@ -81,8 +75,7 @@ public class ReplyService {
 					.build();
 
 			// 5. parent 있을 시 여기서 추가
-			if(replyReq.getParentId() != null && !replyReq.getParentId().isEmpty())
-			{	
+			if(replyReq.getParentId() != null && !replyReq.getParentId().isEmpty()) {
 				Optional <ReplyEntity> parent = replyRepository.findById(Integer.parseInt(replyReq.getParentId()));
 				if(parent.isPresent()) {
 					newReply.setParent(parent.get());
@@ -94,14 +87,12 @@ public class ReplyService {
 
 			// 7. 댓글 리턴 객체 세팅
 			replyRes = ReplyRes.replyFromEntity(newReply);
-			replyRes.setResultMsg(BoardContants.State.SUCCESS);
+			replyRes.setResultMsg(BoardConstants.State.SUCCESS);
 
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			replyRes = new ReplyRes();
 			replyRes.setResultMsg(ErrorMessages.FILE_SEARCH_FAILED.getMessage());
-			LOG.error("addReply error : {}", e);
+			log.error("addReply error : {}", e);
 		}
 		return replyRes;
 	}
@@ -114,21 +105,18 @@ public class ReplyService {
 	public List<ReplyRes> findReplyList(PostEntity postEntity) {
 		// 1. 댓글 리스트 조회
 		List<ReplyEntity> replies = new ArrayList<>();  // replies 변수 선언 위치 변경
-		try 
-		{
+
+		try {
 			replies = replyRepository.findByPostEntityOrderByCreateDateDesc(postEntity);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
+		} catch (Exception e) {
+			return null; // 리스트 조회 중 에러 발생 시 null 리턴
 		}
 
 		// 2. 변환된 결과를 저장할 새로운 리스트 생성
 		List<ReplyRes> replyResList = new ArrayList<>();
 
 		// 3. for 루프를 사용하여 변환 + 하위 댓글 리스트 추가
-		for (ReplyEntity reply : replies) 
-		{
+		for (ReplyEntity reply : replies) {
 			ReplyRes replyRes = ReplyRes.replyFromEntity(reply); // entity -> res 변환
 
 			// 하위 댓글 세팅

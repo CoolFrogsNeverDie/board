@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.board.config.constants.BoardContants;
+import com.board.constants.BoardConstants;
 import com.board.dto.PostDetailRes;
 import com.board.dto.PostWriteReq;
 import com.board.dto.PostWriteRes;
@@ -41,8 +41,7 @@ public class PostController {
 	@RequestMapping(value = "/form", method =  RequestMethod.GET)
 	public String postForm(
 			HttpSession session
-			,Model model)
-	{
+			,Model model) {
 		return PageContentUtil.getViewPage(model,"postForm"); // 게시글 작성 폼
 	}
 
@@ -58,13 +57,10 @@ public class PostController {
 	public String newPost(
 			@Valid @ModelAttribute PostWriteReq postWriteReq // 사용자 입력 객체
 			,BindingResult bindingRst
-			,RedirectAttributes redirectAttr
-			,Model model)
-	{
+			,RedirectAttributes redirectAttr) {
 
 		// PostWriteReq dto 입력값 검증 -> 실패 시 errorMsg + 등록 폼 리턴
-		if(bindingRst.hasErrors()) 
-		{
+		if(bindingRst.hasErrors()) {
 			String errorMsg = bindingRst.getAllErrors().get(0).getDefaultMessage(); // dto 검증 실패 errorMsg
 			redirectAttr.addFlashAttribute("errorMsg", errorMsg);
 			return "redirect:/post/form";
@@ -72,12 +68,9 @@ public class PostController {
 
 		PostWriteRes postWriteRes = postService.savePost(postWriteReq); // 게시글 저장
 
-		if(postWriteRes.getResultMsg().equals(BoardContants.State.SUCCESS)) // 저장 성공
-		{
-			return "redirect:/board";
-		}
-		else 
-		{
+		if(BoardConstants.State.SUCCESS.equals(postWriteRes.getResultMsg())) {
+			return "redirect:/board/list";
+		} else {
 			redirectAttr.addFlashAttribute("errorMsg", postWriteRes.getResultMsg()); // 오류 메세지
 			return "redirect:/post/form";
 		}
@@ -92,23 +85,18 @@ public class PostController {
 	@RequestMapping(value = "/{postId}" , method = RequestMethod.GET)
 	public String postDetailPage(
 			@PathVariable("postId") String postId // 게시글 아이디
-			, Model model) 
-	{
-		try 
-		{
+			, Model model) {
+
+		try {
 			PostDetailRes post = postService.getPostDetailByPostId(postId); //게시글 아이디로 게시글 정보 가져오기
-			if(post != null) 
-			{
+			if(post != null) {
 				model.addAttribute("post", post); //게시글 내용
 			}
-			postService.addHit(postId); //조회수 추가
-		}
-		catch (Exception e)
-		{
+			postService.addHit(postId); //조회수 증가 -> 중요하지 않은 로직이라 별도 분리함
+		}catch (Exception e) {
 			model.addAttribute("errorMsg", e.getMessage()); //게시글 없을 시 errorMsg 리턴
 		}
 
 		return PageContentUtil.getViewPage(model,"postDetail");
 	}
-
 }

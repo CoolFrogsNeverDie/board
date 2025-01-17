@@ -23,10 +23,8 @@ public class Pagination {
 	private int prePage; // 이전 페이지
 
 	//생성자
-	public Pagination(Page<Object> obj)
-	{
-		if(obj != null)
-		{
+	public Pagination(Page<Object> obj) {
+		if(obj != null) {
 			this.currentPage = obj.getNumber() + 1;
 			this.totalPages = obj.getTotalPages();
 			this.pageNumbers = getPageNumbers(obj.getTotalPages());

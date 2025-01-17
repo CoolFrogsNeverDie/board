@@ -15,7 +15,7 @@
 				<!-- Post Detail -->
 				<div class="post-content">
 					<div class="container">
-						<block th:if="${post != null}">
+						<th:block th:if="${post != null}">
 							<table class="post-table">
 								<tbody>
 									<tr>
@@ -38,14 +38,14 @@
 										<th>작성일</th>
 										<td th:text="${#temporals.format(post.createDate, 'yyyy-MM-dd HH:mm')}"></td>
 									</tr>
-									<block th:if="${post.fileName != null}">
+									<th:block th:if="${post.fileName != null}">
 										<tr>
 											<th>첨부파일</th>
 											<td>
 												<a th:href="@{/file/download/{fileName}(fileName=${post.fileName})}" th:text="${post.originalFileName} + ' 다운로드'" download></a>
 											</td>
 										</tr>
-									</block>
+									</th:block>
 									<tr>
 										<th>내용</th>
 										<td th:text="${post.content}">게시글 내용</td>
@@ -77,11 +77,11 @@
 									<button class="btn btn-dark" id="addReply_btn">댓글 작성</button>
 								</div>
 							</div>
-						</block>
-						<block if:unless="${post == null && errorMsg != null}">
+						</th:block>
+						<th:block if:unless="${post == null && errorMsg != null}">
 							<div class="errorMsg" th:text="${errorMsg}"></div>
-							<a href="/board" class="btn btn-dark">홈으로 돌아가기</a>
-						</block>
+							<a href="/board/list" class="btn btn-dark">홈으로 돌아가기</a>
+						</th:block>
 					</div>
 				</div>
 			</section>

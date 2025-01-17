@@ -67,7 +67,7 @@ public class SecurityConfig {
 
 			// 로그인 설정
 			.formLogin(form -> form
-				.loginPage("/member/loginpage")  // 로그인 페이지 경로 설정
+				.loginPage("/member/login")  // 로그인 페이지 경로 설정
 				.loginProcessingUrl("/login/proc") // 로그인 처리 URL
 				.successHandler(authenticationSuccessHandler()) // 성공 핸들러 등록
 				.failureHandler(authenticationFailureHandler()) // 실패 핸들러 등록
@@ -77,7 +77,7 @@ public class SecurityConfig {
 			// 로그아웃 설정
 			.logout(logout -> logout
 				.logoutUrl("/logout") // 로그아웃 URL
-				.logoutSuccessUrl("/member/loginpage") // 로그아웃 성공 후 이동할 URL
+				.logoutSuccessUrl("/member/login") // 로그아웃 성공 후 이동할 URL
 			);
 
 		return http.build();
@@ -92,7 +92,9 @@ public class SecurityConfig {
 	 * @throws Exception
 	 */
 	@Bean
-	public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder) throws Exception {
+	public AuthenticationManager authenticationManager(
+			HttpSecurity http
+			, PasswordEncoder passwordEncoder) throws Exception {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(); // DaoAuthenticationProvider 생성
 		authProvider.setUserDetailsService(inMemoryUserDetailsManager()); // 사용자 정보 - 인메모리 방식
 		authProvider.setPasswordEncoder(passwordEncoder); // 비밀번호 암호화 설정
@@ -131,7 +133,7 @@ public class SecurityConfig {
 			HttpSession session = request.getSession();
 			String name = authentication.getName();
 			session.setAttribute("currentUser", new MemberLoginRes(name, "인메모리")); // 로그인 유저 정보 session 저장
-			response.sendRedirect("/board"); // 성공 후 /board 페이지로 리디렉션
+			response.sendRedirect("/board/list"); // 성공 후 /board 페이지로 리디렉션
 		};
 	}
 
@@ -142,7 +144,7 @@ public class SecurityConfig {
 	@Bean
 	public AuthenticationFailureHandler authenticationFailureHandler() {
 		return (request, response, exception) -> {
-			response.sendRedirect("/member/loginpage?isFail=true");
+			response.sendRedirect("/member/login?isFail=true");
 		};
 	}
 

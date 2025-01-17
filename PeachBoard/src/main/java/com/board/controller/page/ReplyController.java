@@ -36,11 +36,9 @@ public class ReplyController {
 	@RequestMapping(value ="/new", method =RequestMethod.POST)
 	public ReplyRes addReply(
 			@Valid @RequestBody  ReplyReq replyReq
-			, BindingResult bindingRst)
-	{
+			, BindingResult bindingRst) {
 		// ReplyReq dto 입력값 검증 -> 실패 시 errorMsg 추가 후 리턴
-		if(bindingRst.hasErrors()) 
-		{
+		if(bindingRst.hasErrors()) {
 			String errorMsg = bindingRst.getAllErrors().get(0).getDefaultMessage(); // dto 검증 실패 errorMsg
 			new ReplyRes().setResultMsg(errorMsg);
 		}
