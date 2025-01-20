@@ -34,7 +34,7 @@ public class PostEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "post_number")
-	private Integer id; // id
+	private Long id; // id
 
 	@JoinColumn(name = "writer")
 	private String writer; // 작성자

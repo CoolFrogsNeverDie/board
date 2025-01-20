@@ -28,7 +28,7 @@ public class FileEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "member_number")
-	private Integer id; // id
+	private Long id; // id
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "post_id")

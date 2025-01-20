@@ -23,9 +23,9 @@ import lombok.Setter;
 @AllArgsConstructor // 모든 필드를 받는 생성자 추가
 public class ReplyRes {
 
-	private Integer parentId; // 부모 댓글 아이디
+	private Long parentId; // 부모 댓글 아이디
 
-	private Integer id;
+	private Long id;
 
 	private String writer; // 작성자
 

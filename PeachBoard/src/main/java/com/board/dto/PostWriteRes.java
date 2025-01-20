@@ -13,6 +13,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class PostWriteRes {
-	private Integer id; // 게시글 아이디
+	private Long id; // 게시글 아이디
 	private String resultMsg; // 결과 메세지
 }

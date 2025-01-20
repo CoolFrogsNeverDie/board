@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.board.service.FileService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * FileController.java 
  * 
  * 게시글 파일 관리 controller
  */
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/file")
@@ -32,7 +34,14 @@ public class FileController {
 	public ResponseEntity<byte[]> downloadFile(
 			@PathVariable("fileName") String fileName) {
 
-		ResponseEntity<byte[]> result =  fileService.downloadFile(fileName);
+		ResponseEntity<byte[]> result = null;
+
+		try {
+			result =  fileService.downloadFile(fileName);
+		}catch (Exception e) {
+			log.error("downloadFile is error : {}",e.getMessage(),e );
+			
+		}
 
 		return result;
 	}

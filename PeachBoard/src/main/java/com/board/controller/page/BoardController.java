@@ -5,15 +5,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.board.dto.PostDetailRes;
 import com.board.service.PostService;
 import com.board.util.PageContentUtil;
 import com.board.util.Pagination;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -38,7 +37,7 @@ public class BoardController {
 	 * F.board controller에는 왜 controller url 매핑이 안 되어 있나
 	 * -> 추후 전체 수정을 했어서 누락. 전체적인 퀄리티 떨어져 보임. 수정
 	 */
-	@RequestMapping(value = "/list", method =  RequestMethod.GET)
+	@GetMapping("/list")
 	public String boardPage(
 			@PageableDefault(size=5, page=0) Pageable pageable
 			, Model model) {

@@ -95,7 +95,7 @@ $(document).ready(function() {
 		commentHtml += '	<p class="comment-content">' + result.content + '</p>';
 		commentHtml += '    <button class="btn-dark" id="sub_reply_' + result.id + '">+ Re</button>';
 		commentHtml += '</div>';
-		
+
 		return commentHtml;
 	}
 
@@ -119,7 +119,7 @@ $(document).ready(function() {
 		commentHtml += '	<p class="comment-author">작성자: ';
 		commentHtml += '		<span>' + result.writer + '</span>';
 		commentHtml += '	</p>';
-		commentHtml += '	<p class="comment-content">' + result.content + 'sdfdfsdfdsfdsf</p>';
+		commentHtml += '	<p class="comment-content">' + result.content + '</p>';
 		commentHtml += '</div>';
 
 		return commentHtml;

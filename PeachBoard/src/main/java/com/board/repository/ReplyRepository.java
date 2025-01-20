@@ -24,8 +24,7 @@ public interface ReplyRepository extends JpaRepository<ReplyEntity, Long>{
 	List<ReplyEntity> findByPostEntityOrderByCreateDateDesc(@Param("postEntity") PostEntity postEntity);
 
 	// 특정 부모 댓글을 기준으로 자식 댓글을 등록일 역순으로 조회하는 메서드
-	@Query("SELECT r FROM ReplyEntity r WHERE r.parent = :parent ORDER BY r.createDate ASC")
-	List<ReplyEntity> findChildRepliesByParentOrderByCreateDateDesc(@Param("parent") ReplyEntity parent);
+	List<ReplyEntity> findByParentOrderByCreateDateAsc(ReplyEntity parent);
 
 	// 특정 ID로 댓글을 조회하는 메서드
 	Optional<ReplyEntity> findById(Integer id);

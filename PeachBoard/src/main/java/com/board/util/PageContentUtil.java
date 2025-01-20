@@ -19,6 +19,6 @@ public class PageContentUtil {
 	 */
 	public static String getViewPage(Model model, String content) {
 		model.addAttribute("pageTitle", content); // 페이지명
-		return BoardConstants.ContentBaseRoot.CONTENT_ROOT + content; // html 경로 왜 커밋이..
+		return BoardConstants.ContentBaseRoot.CONTENT_ROOT + content; // html 경로 
 	}
 }

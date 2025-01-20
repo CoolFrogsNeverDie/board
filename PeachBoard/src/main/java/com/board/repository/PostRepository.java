@@ -1,7 +1,5 @@
 package com.board.repository;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,13 +14,6 @@ import com.board.entity.PostEntity;
  */
 @Repository
 public interface PostRepository extends JpaRepository<PostEntity, Long>{
-
-	/**
-	 * Id로 post 엔티티 찾기
-	 * @param id
-	 * @return Optional<PostEntity>
-	 */
-	Optional<PostEntity> findPostById(Integer id);
 
 	/**
 	 * pageable 객체로 게시글 리스트 찾기

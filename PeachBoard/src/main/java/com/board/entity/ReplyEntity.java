@@ -32,7 +32,7 @@ public class ReplyEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "reply_number")
-	private Integer id; // id
+	private Long id; // id
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "post_id")

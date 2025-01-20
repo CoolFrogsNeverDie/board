@@ -1,35 +1,33 @@
 package com.board.controller.page;
 
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.board.constants.BoardConstants;
 import com.board.dto.PostDetailRes;
 import com.board.dto.PostWriteReq;
-import com.board.dto.PostWriteRes;
 import com.board.service.PostService;
 import com.board.util.PageContentUtil;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * PostPageController.java 
  * 
  * 게시글 controller
  */
+@Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping(value = "/post", method = {RequestMethod.GET, RequestMethod.POST})
+@RequestMapping("/post")
 public class PostController {
-	
+
 	private final PostService postService; // 게시글 서비스
 
 	/**
@@ -38,7 +36,7 @@ public class PostController {
 	 * @param model
 	 * @return 게시글 작성 페이지
 	 */
-	@RequestMapping(value = "/form", method =  RequestMethod.GET)
+	@GetMapping("/form")
 	public String postForm(
 			HttpSession session
 			,Model model) {
@@ -53,7 +51,7 @@ public class PostController {
 	 * @param model
 	 * @return 페이지 분기
 	 */
-	@RequestMapping(value = "/new", method =  RequestMethod.POST)
+	@PostMapping("/new")
 	public String newPost(
 			@Valid @ModelAttribute PostWriteReq postWriteReq // 사용자 입력 객체
 			,BindingResult bindingRst
@@ -66,13 +64,13 @@ public class PostController {
 			return "redirect:/post/form";
 		}
 
-		PostWriteRes postWriteRes = postService.savePost(postWriteReq); // 게시글 저장
-
-		if(BoardConstants.State.SUCCESS.equals(postWriteRes.getResultMsg())) {
-			return "redirect:/board/list";
-		} else {
-			redirectAttr.addFlashAttribute("errorMsg", postWriteRes.getResultMsg()); // 오류 메세지
-			return "redirect:/post/form";
+		try {
+			postService.savePost(postWriteReq); // 게시글 저장
+			return "redirect:/board/list"; // 게시판으로 이동
+		} catch (Exception e) {
+			log.error("newPost is error : {}", e.getMessage(), e);
+			redirectAttr.addFlashAttribute("errorMsg", e.getMessage()); // 오류 메세지
+			return "redirect:/post/form"; // 게시글 작성폼으로 이동
 		}
 	}
 
@@ -82,9 +80,9 @@ public class PostController {
 	 * @param model
 	 * @return 게시글 상세 페이지
 	 */
-	@RequestMapping(value = "/{postId}" , method = RequestMethod.GET)
+	@GetMapping("/{postId}")
 	public String postDetailPage(
-			@PathVariable("postId") String postId // 게시글 아이디
+			@PathVariable("postId") Long postId // 게시글 아이디
 			, Model model) {
 
 		try {

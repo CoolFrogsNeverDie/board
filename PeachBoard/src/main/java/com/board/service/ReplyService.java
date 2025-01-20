@@ -41,15 +41,14 @@ public class ReplyService {
 	 * @param replyReq
 	 * @return ReplyRes
 	 */
-	public ReplyRes addReply(ReplyReq replyReq) {
+	public ReplyRes saveReply(ReplyReq replyReq) throws Exception{
 
 		ReplyRes replyRes = null;
 
-		try {
 			log.info("#######################reply add Start#######################");
 
 			// 1. 게시글 조회
-			Optional<PostEntity> postEntity = postRepository.findPostById(Integer.valueOf(replyReq.getPostId()));
+			Optional<PostEntity> postEntity = postRepository.findById(replyReq.getPostId());
 
 			// 2. 로그인여부 확인
 			MemberLoginRes member = (MemberLoginRes) httpSession.getAttribute("currentUser");
@@ -75,8 +74,9 @@ public class ReplyService {
 					.build();
 
 			// 5. parent 있을 시 여기서 추가
-			if(replyReq.getParentId() != null && !replyReq.getParentId().isEmpty()) {
-				Optional <ReplyEntity> parent = replyRepository.findById(Integer.parseInt(replyReq.getParentId()));
+			if(replyReq.getParentId() != null && replyReq.getParentId() != 0L) {
+//				if(replyReq.getParentId() != null && !replyReq.getParentId().isEmpty()) {
+				Optional <ReplyEntity> parent = replyRepository.findById(replyReq.getParentId());
 				if(parent.isPresent()) {
 					newReply.setParent(parent.get());
 				}
@@ -89,11 +89,6 @@ public class ReplyService {
 			replyRes = ReplyRes.replyFromEntity(newReply);
 			replyRes.setResultMsg(BoardConstants.State.SUCCESS);
 
-		} catch (Exception e) {
-			replyRes = new ReplyRes();
-			replyRes.setResultMsg(ErrorMessages.FILE_SEARCH_FAILED.getMessage());
-			log.error("addReply error : {}", e);
-		}
 		return replyRes;
 	}
 
@@ -120,7 +115,7 @@ public class ReplyService {
 			ReplyRes replyRes = ReplyRes.replyFromEntity(reply); // entity -> res 변환
 
 			// 하위 댓글 세팅
-			List<ReplyEntity> childList = replyRepository.findChildRepliesByParentOrderByCreateDateDesc(reply);
+			List<ReplyEntity> childList = replyRepository.findByParentOrderByCreateDateAsc(reply);
 			List<ReplyRes> childRepliesRes = childList.stream()
 					.map(child -> ReplyRes.replyFromEntity(child)) // ReplyEntity를 ReplyRes로 변환
 					.collect(Collectors.toList());

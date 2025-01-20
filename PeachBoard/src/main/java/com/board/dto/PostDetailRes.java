@@ -19,7 +19,7 @@ import lombok.Setter;
 @Builder
 public class PostDetailRes {
 
-	private Integer id; // 게시글 아이디
+	private Long id; // 게시글 아이디
 
 	private String writer; // 작성자
 
