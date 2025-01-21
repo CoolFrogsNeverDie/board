@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.board.dto.PostDetailRes;
 import com.board.service.PostService;
 import com.board.util.PageContentUtil;
-import com.board.util.Pagination;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -40,13 +40,13 @@ public class BoardController {
 	@GetMapping("/list")
 	public String boardPage(
 			@PageableDefault(size=5, page=0) Pageable pageable
-			, Model model) {
+			, Model model
+			, HttpServletRequest  request) {
 
 		Page<PostDetailRes> posts = postService.findPost(pageable); // pageable 객체로 게시글 리스트 조회
-		Pagination pagination = new Pagination(posts.map(PostDetailRes -> (Object)PostDetailRes )); // 페이징 정보
 
 		model.addAttribute("posts", posts);
-		model.addAttribute("paging", pagination);
+		model.addAttribute("pageUrl", request.getRequestURL()); // 페이징 url용
 
 		return PageContentUtil.getViewPage(model,"board");
 	}

@@ -14,9 +14,9 @@ import lombok.Setter;
  * 
  * 게시글 상세 응답 dto
  */
+@Builder
 @Getter
 @Setter
-@Builder
 public class PostDetailRes {
 
 	private Long id; // 게시글 아이디
@@ -36,23 +36,4 @@ public class PostDetailRes {
 	private String originalFileName; // 오리지널 파일명
 
 	private List<ReplyRes> replyList; // 댓글 리스트
-
-	/**
-	 * postEntity 이용해 PostDetailRes 객체 생성
-	 * @param postEntity
-	 * @return
-	 */
-	public static PostDetailRes postFromEntity(PostEntity postEntity) {
-		return PostDetailRes.builder()
-				.id(postEntity.getId())
-				.writer(postEntity.getWriter())
-				.createDate(postEntity.getCreateDate())
-				.title(postEntity.getTitle())
-				.content(postEntity.getContent())
-				.hits(postEntity.getHits())
-				.fileName(postEntity.getFileName())
-				.originalFileName(postEntity.getOriginalFileName())
-				.build();
-	}
-
 }

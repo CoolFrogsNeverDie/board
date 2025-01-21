@@ -48,7 +48,7 @@ public class ReplyController {
 			String errorMsg = bindingRst.getAllErrors().get(0).getDefaultMessage(); // dto 검증 실패 errorMsg
 			replyRes = new ReplyRes();
 			replyRes.setResultMsg(errorMsg);
-
+			log.error("addReply - replyReq validation : {}", errorMsg);
 			return replyRes;
 		}
 
@@ -56,7 +56,7 @@ public class ReplyController {
 			replyRes = replyService.saveReply(replyReq); //댓글 등록
 		}catch (Exception e) {
 			replyRes = new ReplyRes();
-			replyRes.setResultMsg(ErrorMessages.FILE_SEARCH_FAILED.getMessage()); //파일 조회 실패 메세지 세팅
+			replyRes.setResultMsg(ErrorMessages.REPLY_ADD_FAILED.getMessage()); // 댓글 등록 실패 메세지 조회
 			log.error("addReply error : {}", e.getMessage(), e);
 		}
 

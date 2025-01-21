@@ -36,19 +36,4 @@ public class ReplyRes {
 	private String resultMsg; // 결과 메세지
 
 	private List<ReplyRes> chilsReplyList; // 자식 댓글 리스트
-
-	/**
-	 * replyEntity 이용해 ReplyRes 생성
-	 * @param replyEntity
-	 * @return
-	 */
-	public static ReplyRes replyFromEntity(ReplyEntity replyEntity) {
-		return ReplyRes.builder()
-				.parentId(replyEntity.getParent() != null ? replyEntity.getParent().getId() : null)
-				.id(replyEntity.getId())
-				.writer(replyEntity.getWriter())
-				.createTime(replyEntity.getCreateDate())
-				.content(replyEntity.getContent())
-				.build();
-	}
 }

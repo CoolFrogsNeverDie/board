@@ -41,28 +41,8 @@
 						</table>
 					</div>
 				</div>
-				<div class="pagination">
-					<div class="container">
-						<ul class="pagination-list">
-							<!-- 이전 버튼 -->
-							<li th:classappend="${paging.currentPage == 1} ? 'disabled'">
-								<a th:href="@{/board/list(page=${paging.currentPage - 2})}" th:if="${paging.currentPage > 1}">&laquo;</a>
-								<span th:if="${paging.currentPage == 1}">&laquo;</span>
-							</li>
-
-							<!-- 페이지 번호 -->
-							<li th:each="pageNum : ${paging.pageNumbers}" th:classappend="${pageNum == paging.currentPage} ? 'active'">
-								<a th:href="@{/board/list(page=${pageNum - 1})}" th:text="${pageNum}"></a>
-							</li>
-
-							<!-- 다음 버튼 -->
-							<li th:classappend="${paging.currentPage == paging.totalPages} ? 'disabled'">
-								<a th:href="@{/board/list(page=${paging.currentPage})}" th:if="${paging.currentPage < paging.totalPages}">&raquo;</a>
-								<span th:if="${paging.currentPage == paging.totalPages}">&raquo;</span>
-							</li>
-						</ul>
-					</div>
-				</div>
+				<!--페이징 -->
+				<div th:insert="~{/common/fragments/pagination.html :: pagination }"></div>
 			</section>
 		</main>
 		<!--// main content //-->

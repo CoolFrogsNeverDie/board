@@ -12,7 +12,6 @@ import com.board.dto.PostWriteReq;
 import com.board.service.PostService;
 import com.board.util.PageContentUtil;
 
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,9 +36,7 @@ public class PostController {
 	 * @return 게시글 작성 페이지
 	 */
 	@GetMapping("/form")
-	public String postForm(
-			HttpSession session
-			,Model model) {
+	public String postForm(Model model) {
 		return PageContentUtil.getViewPage(model,"postForm"); // 게시글 작성 폼
 	}
 

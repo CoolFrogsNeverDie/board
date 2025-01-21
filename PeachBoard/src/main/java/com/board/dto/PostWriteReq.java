@@ -15,7 +15,6 @@ import lombok.ToString;
  */
 @Getter
 @Setter
-@ToString
 public class PostWriteReq {
 	
 	@NotBlank(message = "제목은 필수 입력 사항입니다.")

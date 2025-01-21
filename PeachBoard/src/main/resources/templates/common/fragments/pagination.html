@@ -1,0 +1,38 @@
+<!-- 페이징 공통 모듈 - controller에서 저장된 pageUrl model 을 이용해 페이징 번호 처리-->
+<div th:fragment="pagination">
+	<div class="pagination"
+		th:with="
+			currentPage = ${posts.number + 1},
+			totalPages = ${posts.totalPages},
+			start = ${T(java.lang.Math).max(1, currentPage - 5)},
+			end = ${T(java.lang.Math).min(totalPages, currentPage + 4)}
+	">
+
+		<div class="container">
+			<ul class="pagination-list">
+				<!-- 이전 페이지 버튼 -->
+				<li th:classappend="${currentPage == 1} ? 'disabled'">
+					<a th:if="${currentPage > 1}"
+						th:href="@{${pageUrl}(page=${currentPage - 2})}">&laquo;</a>
+					<span th:if="${currentPage == 1}">&laquo;</span>
+				</li>
+
+				<!-- 페이지 번호 -->
+				<li th:each="num : ${#numbers.sequence(start, end)}"
+					th:classappend="${num == currentPage} ? 'active'">
+					<a th:href="@{${pageUrl}(page=${num - 1})}"
+						th:if="${num > 0}"
+						th:text="${num}">1</a>
+				</li>
+
+				<!-- 다음 페이지 버튼 -->
+				<li th:classappend="${currentPage == totalPages} ? 'disabled'">
+					<a th:if="${currentPage < totalPages}"
+						th:href="@{${pageUrl}(page=${currentPage})}">&raquo;</a>
+					<span th:if="${currentPage == totalPages}">&raquo;</span>
+				</li>
+
+			</ul>
+		</div>
+	</div>
+</div>

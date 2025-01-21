@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="ko"
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,15 +15,15 @@
 			<div class="container">
 				<div class="header-content">
 					<div class="logo">
-						<h1><a th:href="@{/board/list}" class="board-logo">My Board</a></h1>
+						<h1><a th:href="@{/board/list}" class="board-logo">My Board</span> </a></h1>
 						<h1 th:text="${pageContent}"></h1>
 					</div>
 					<div class="user-info">
-						<span th:if="${session.currentUser != null}">
-							<span th:text="'Welcome, ' + ${session.currentUser.userName}"></span>
+						<span sec:authorize="isAuthenticated()"> <!--로그인 여부 체크-->
+							<span th:text="'Welcome, ' + ${#authentication.name}"></span>
 							<a th:href="@{/logout}">로그아웃</a>
 						</span>
-						<span th:unless="${session.currentUser != null}">
+						<span sec:authorize="!isAuthenticated()">
 							<a th:href="@{/member/login}">로그인</a>
 						</span>
 					</div>

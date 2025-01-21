@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,8 +22,10 @@ import lombok.NoArgsConstructor;
  * 게시글 첨부파일 관리 엔티티
  */
 @Entity
+@Builder
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "file")
 public class FileEntity {
 
@@ -45,14 +48,4 @@ public class FileEntity {
 
 	@Column(name = "upload_date")
 	private LocalDateTime uploadDate; // 게시일자
-
-	// 셍성자
-	@Builder
-	public FileEntity(String fileName, String originalFileName ,String contentType, LocalDateTime uploadDate, PostEntity post) {
-		this.fileName = fileName;
-		this.originalFileName = originalFileName;
-		this.contentType = contentType;
-		this.uploadDate = uploadDate;
-		this.post = post;
-	}
 }

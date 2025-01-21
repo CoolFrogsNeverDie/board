@@ -6,10 +6,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.board.constants.BoardConstants;
-import com.board.dto.MemberLoginRes;
 import com.board.dto.ReplyReq;
 import com.board.dto.ReplyRes;
 import com.board.entity.PostEntity;
@@ -18,7 +19,6 @@ import com.board.enums.ErrorMessages;
 import com.board.repository.PostRepository;
 import com.board.repository.ReplyRepository;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ReplyService {
 
-	private final HttpSession httpSession; // http 세션
 	private final PostRepository postRepository; // 게시글 repository
 	private final ReplyRepository replyRepository; // 게시글 repository
 
@@ -51,10 +50,11 @@ public class ReplyService {
 			Optional<PostEntity> postEntity = postRepository.findById(replyReq.getPostId());
 
 			// 2. 로그인여부 확인
-			MemberLoginRes member = (MemberLoginRes) httpSession.getAttribute("currentUser");
-			if(member == null) {
+			Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			if("anonymousUser".equals(principal)) {
 				throw new Exception(ErrorMessages.LOGIN_REQUIRED.getMessage());
 			}
+			UserDetails userDetails = (UserDetails) principal; // 로그인 상태면 userDetails 객체 선언
 
 			log.info("#######################validate#######################");
 
@@ -67,15 +67,14 @@ public class ReplyService {
 
 			// 4. 저장용 댓글 객체 생성
 			ReplyEntity newReply = ReplyEntity.builder()
-					.creaDate(LocalDateTime.now()) // 작성일자
+					.createDate(LocalDateTime.now()) // 작성일자
 					.content(replyReq.getContent()) // 내용
 					.postEntity(postEntity.get()) // 게시글
-					.writer(member.getUserName())
+					.writer(userDetails.getUsername()) // 작성자
 					.build();
 
 			// 5. parent 있을 시 여기서 추가
 			if(replyReq.getParentId() != null && replyReq.getParentId() != 0L) {
-//				if(replyReq.getParentId() != null && !replyReq.getParentId().isEmpty()) {
 				Optional <ReplyEntity> parent = replyRepository.findById(replyReq.getParentId());
 				if(parent.isPresent()) {
 					newReply.setParent(parent.get());
@@ -86,7 +85,13 @@ public class ReplyService {
 			replyRepository.save(newReply);
 
 			// 7. 댓글 리턴 객체 세팅
-			replyRes = ReplyRes.replyFromEntity(newReply);
+			replyRes = ReplyRes.builder()
+					.parentId(newReply.getParent() != null ? newReply.getParent().getId() : null) // 부모 댓글 아이디
+					.id(newReply.getId())
+					.writer(newReply.getWriter()) // 작성자
+					.content(newReply.getContent()) // 내용
+					.build();
+
 			replyRes.setResultMsg(BoardConstants.State.SUCCESS);
 
 		return replyRes;
@@ -110,18 +115,32 @@ public class ReplyService {
 		// 2. 변환된 결과를 저장할 새로운 리스트 생성
 		List<ReplyRes> replyResList = new ArrayList<>();
 
-		// 3. for 루프를 사용하여 변환 + 하위 댓글 리스트 추가
+		// 3. 변환된 댓글 세팅
 		for (ReplyEntity reply : replies) {
-			ReplyRes replyRes = ReplyRes.replyFromEntity(reply); // entity -> res 변환
+			// 3-1. 댓글 객체 dto 변환
+			ReplyRes replyRes = ReplyRes.builder()
+									.id(reply.getId()) // 댓글 아이디
+									.writer(reply.getWriter()) // 작성자
+									.content(reply.getContent()) // 내용
+									.build(); // entity -> res 변환
 
-			// 하위 댓글 세팅
+			// 3-2. 하위 댓글 조회
 			List<ReplyEntity> childList = replyRepository.findByParentOrderByCreateDateAsc(reply);
-			List<ReplyRes> childRepliesRes = childList.stream()
-					.map(child -> ReplyRes.replyFromEntity(child)) // ReplyEntity를 ReplyRes로 변환
-					.collect(Collectors.toList());
 
-			replyRes.setChilsReplyList(childRepliesRes); // 자식 댓글 검색
-			replyResList.add(replyRes); // 자식 댓글 세팅
+			// 3-3. 하위 댓글 존재할 시에만 하위 댓글 세팅
+			if(!childList.isEmpty()) {
+				List<ReplyRes> childRepliesRes = childList.stream()
+						.map(child -> ReplyRes.builder()
+								.parentId(child.getParent().getId()) // 부모 댓글
+								.id(child.getId()) // 댓글 아이디
+								.writer(child.getWriter()) // 작성자
+								.content(child.getContent()) // 내용
+								.build()) // ReplyEntity를 ReplyRes로 변환
+						.collect(Collectors.toList());
+
+				replyRes.setChilsReplyList(childRepliesRes); // 하위 댓글 세팅
+			}
+			replyResList.add(replyRes); // 댓글 리스트 세팅
 		}
 		return replyResList;
 	}

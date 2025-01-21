@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,16 +25,18 @@ import lombok.Setter;
  * 댓글 데이터 관리 엔티티
  */
 @Entity
+@Builder
 @Getter
 @Setter
 @Table(name="reply")
 @NoArgsConstructor
+@AllArgsConstructor
 public class ReplyEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "reply_number")
 	private Long id; // id
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "post_id")
 	private PostEntity postEntity; // 게시글
@@ -59,14 +62,4 @@ public class ReplyEntity {
 
 	@OneToMany(mappedBy = "parent")
 	private List<ReplyEntity> childReplies; // 자식 댓글 리스트 추가
-
-	@Builder
-	public ReplyEntity(PostEntity postEntity,ReplyEntity parentId, String writer, LocalDateTime creaDate, LocalDateTime modifiedDate, String content, ReplyEntity parent){
-		this.postEntity = postEntity;
-		this.writer = writer;
-		this.createDate = creaDate;
-		this.modifiedDate = modifiedDate;
-		this.content = content;
-		this.parent = parent;
-	}
 }

@@ -17,9 +17,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-import com.board.dto.MemberLoginRes;
-
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -128,10 +125,6 @@ public class SecurityConfig {
 	@Bean
 	public AuthenticationSuccessHandler authenticationSuccessHandler() {
 		return (request, response, authentication) ->{
-			// 인증 성공 시 사용자 정보를 세션에 저장
-			HttpSession session = request.getSession();
-			String name = authentication.getName();
-			session.setAttribute("currentUser", new MemberLoginRes(name, "인메모리")); // 로그인 유저 정보 session 저장
 			response.sendRedirect("/board/list"); // 성공 후 /board 페이지로 리디렉션
 		};
 	}

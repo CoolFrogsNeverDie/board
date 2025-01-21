@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,10 +27,12 @@ import lombok.Setter;
  * 게시글 데이터 관리 엔티티
  */
 @Entity
+@Builder
 @Getter
 @Setter
 @Table(name = "post")
 @NoArgsConstructor
+@AllArgsConstructor
 public class PostEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
@@ -67,16 +70,4 @@ public class PostEntity {
 
 	@Column(name = "delete_yn")
 	private char deleteYn; // 삭제여부
-
-	// 생성자
-	@Builder
-	public PostEntity(String writer, LocalDateTime createDate, String title, String content, int hits, String fileName, String originalFileName) {
-		this.writer = writer;
-		this.createDate = createDate;
-		this.title = title;
-		this.content = content;
-		this.hits = hits;
-		this.fileName = fileName;
-		this.originalFileName = originalFileName;
-	}
 }

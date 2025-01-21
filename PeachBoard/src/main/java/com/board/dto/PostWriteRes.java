@@ -11,7 +11,6 @@ import lombok.ToString;
  */
 @Getter
 @Setter
-@ToString
 public class PostWriteRes {
 	private Long id; // 게시글 아이디
 	private String resultMsg; // 결과 메세지

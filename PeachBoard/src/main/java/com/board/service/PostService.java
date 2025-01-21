@@ -7,11 +7,12 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.board.dto.MemberLoginRes;
 import com.board.dto.PostDetailRes;
 import com.board.dto.PostWriteReq;
 import com.board.dto.ReplyRes;
@@ -21,7 +22,6 @@ import com.board.enums.ErrorMessages;
 import com.board.repository.FileRepository;
 import com.board.repository.PostRepository;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -33,7 +33,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PostService {
 
-	private final HttpSession httpSession; // http 세션
 	private final PostRepository postRepository; // 게시글 repository
 	private final FileRepository fileRepository; // 파일 repository
 	private final ReplyService replyService; // 댓글 service
@@ -47,18 +46,19 @@ public class PostService {
 	public void savePost(PostWriteReq postWriteReq) throws Exception{
 
 		//1. 로그인여부 확인
-		MemberLoginRes member = (MemberLoginRes) httpSession.getAttribute("currentUser");
-		if(member == null) {
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if("anonymousUser".equals(principal)) {
 			throw new Exception(ErrorMessages.LOGIN_REQUIRED.getMessage());
 		}
-	
+		UserDetails userDetails = (UserDetails) principal; // 로그인 상태면 userDetails 객체 선언
+
 		//2. 게시글 입력값 검증
 		validatePost(postWriteReq);
 
 		//3. post 객체 생성
 		PostEntity newPost = PostEntity.builder()
 				.createDate(LocalDateTime.now()) // 작성일자
-				.writer(member.getName()) // 작성자
+				.writer(userDetails.getUsername()) // 작성자
 				.title(postWriteReq.getTitle()) // 제목
 				.content(postWriteReq.getContent()) // 내용
 				.hits(0) // 조회수
@@ -69,6 +69,7 @@ public class PostService {
 		FileEntity newFile = null; // 파일 객체
 		String fileName = null; // 변환된 파일명
 
+		//첨부파일 존재할 경우에만 첨부파일 세팅
 		if (file != null && !file.isEmpty()) {
 
 			// 4-1. 첨부파일 파일명 변환
@@ -135,7 +136,16 @@ public class PostService {
 
 		// PostEntity -> PostDetailRes 변환
 		Page<PostDetailRes> postsResponseDtos = postsPages.map(
-			postPage -> PostDetailRes.postFromEntity(postPage));
+			postPage -> PostDetailRes.builder()
+							.id(postPage.getId())
+							.writer(postPage.getWriter())
+							.createDate(postPage.getCreateDate())
+							.title(postPage.getTitle())
+							.content(postPage.getContent())
+							.hits(postPage.getHits())
+							.fileName(postPage.getFileName())
+							.originalFileName(postPage.getOriginalFileName())
+							.build());
 
 		return postsResponseDtos;
 	}
@@ -152,8 +162,18 @@ public class PostService {
 
 		if(optionalPost.isPresent())
 		{
-			PostDetailRes postDetailRes = PostDetailRes.postFromEntity(optionalPost.get()); // res  객체 변환
-			List<ReplyRes> replyList = replyService.findReplyList(optionalPost.get()); // 댓글 리스트 조회
+			PostEntity post =  optionalPost.get();
+			PostDetailRes postDetailRes = PostDetailRes.builder()
+					.id(post.getId())
+					.writer(post.getWriter())
+					.createDate(post.getCreateDate())
+					.title(post.getTitle())
+					.content(post.getContent())
+					.hits(post.getHits())
+					.fileName(post.getFileName())
+					.originalFileName(post.getOriginalFileName())
+					.build();
+			List<ReplyRes> replyList = replyService.findReplyList(post); // 댓글 리스트 조회
 			postDetailRes.setReplyList(replyList); // 댓글 리스트 추가
 			return postDetailRes; // PostDetailRes 리턴
 		}
